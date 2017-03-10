@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Parse
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        Parse.initialize(
+            with: ParseClientConfiguration(block: { (configuration:ParseMutableClientConfiguration) -> Void in
+                configuration.applicationId = "Instagram"
+                configuration.clientKey = "masterKey"
+                configuration.server =  "https://instagramdemosp17.herokuapp.com/parse"
+            })
+        )
+        if PFUser.current() != nil {
+            print (PFUser.current()!)
+            
+            window = UIWindow(frame: UIScreen.main.bounds)
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let initialViewController = storyboard.instantiateViewController(withIdentifier: "Homeline")
+            let navigationController = UINavigationController(rootViewController: initialViewController)
+            navigationController.navigationBar.isTranslucent = false
+            self.window?.rootViewController = navigationController
+            self.window?.makeKeyAndVisible()
+
+        }
+
+        
         return true
     }
 
