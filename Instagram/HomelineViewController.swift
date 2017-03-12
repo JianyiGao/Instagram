@@ -12,7 +12,7 @@ import Parse
 class HomelineViewController: UIViewController,UITableViewDataSource, UITableViewDelegate{
     
     @IBOutlet weak var tableView: UITableView!
-    var posts:[PFObject]!
+    var posts:[PFObject] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,12 +36,12 @@ class HomelineViewController: UIViewController,UITableViewDataSource, UITableVie
                 print ("Data fetched!")
                 self.posts = query
                 print(self.posts)
+                self.tableView.reloadData()
             } else {
                 // handle error
                 print (error?.localizedDescription)
             }
-            
-            self.tableView.reloadData()
+        
         }
         // Do any additional setup after loading the view.
     }
@@ -77,15 +77,30 @@ class HomelineViewController: UIViewController,UITableViewDataSource, UITableVie
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostCell
-        cell.post = self.posts[indexPath.row]
+        let post = self.posts[indexPath.row]
+        let user = post["author"] as! PFObject
         print ("In cellForRowAt: \n")
         print (self.posts[indexPath.row])
 
         
+        cell.captionLabel.text = post["caption"] as! String?
+        
+        cell.usernameLabel.text = user["username"] as! String?
+        
+        let picture = post["media"]
+        
+        (picture as AnyObject).getDataInBackground(block: { (imageData: Data?, error: Error?) in
+            if error == nil {
+                if let imageData = imageData {
+                    let image = UIImage(data:imageData)
+                    cell.postImage.image = image
+                }
+            }
+        })
         return cell
     }
     
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    //    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell
 //        cell?.post = self.posts![indexPath.row]
 //        print ("In cellForRowAt: \n")

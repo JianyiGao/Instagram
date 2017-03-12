@@ -15,7 +15,11 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var captionLabel: UILabel!
     
-    var post: PFObject?
+    var post: PFObject?{
+        didSet {
+                print("Post object has now been set!")
+            }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
